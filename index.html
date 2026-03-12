@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Ice Crystal Web</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a1a2f;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    color: white;
+  }
+
+  /* FETTERES, ZENTRIERTES BANNER */
+  #banner {
+    width: 80%;
+    height: 150px;
+    margin: 25px auto;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid #7ddfff;
+    box-shadow: 0 0 22px #7ddfff;
+    position: relative;
+    z-index: 10;
+  }
+
+  #banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(1.1) saturate(1.05);
+  }
+
+  /* TITEL */
+  h1 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 4rem;
+    letter-spacing: 3px;
+    text-shadow: 0 0 25px #7ddfff;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    z-index: 20;
+  }
+
+  /* FULL PAGE SNOWSTORM */
+  #snowstorm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* GLASSY BUTTONS */
+  .links {
+    margin-top: 20px;
+    text-align: center;
+    z-index: 20;
+    position: relative;
+  }
+
+  .btn {
+    display: inline-block;
+    margin: 12px;
+    padding: 14px 28px;
+    width: 220px;
+    height: 55px;
+    line-height: 25px;
+    font-size: 1.15rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(125, 223, 255, 0.35);
+    backdrop-filter: blur(22px);
+    box-shadow: 0 0 25px rgba(125, 223, 255, 0.25);
+
+    transition: 0.25s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 40px rgba(180, 240, 255, 0.6);
+  }
+
+  /* ICE EXPLOSION PARTICLES */
+  .ice {
+    position: absolute;
+    width: 10px; /* größer */
+    height: 10px;
+    background: #e8faff;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #7ddfff;
+    pointer-events: none;
+    animation: explode 0.7s ease-out forwards;
+    z-index: 30;
+  }
+
+  @keyframes explode {
+    to {
+      transform: translate(var(--x), var(--y)) scale(0.2);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- FETTERES BANNER -->
+<div id="banner">
+  <img src="YOUR_IMAGE_HERE" alt="Banner">
+</div>
+
+<!-- TITEL MIT ICE-EXPLOSION -->
+<h1 id="title">ir8s1234</h1>
+
+<!-- FULL PAGE SNOWSTORM -->
+<canvas id="snowstorm"></canvas>
+
+<!-- BUTTONS IN DER MITTE -->
+<div class="links">
+  <a class="btn" href="https://www.twitch.tv/ir8s1234" target="_blank">🎮 Twitch</a>
+  <a class="btn" href="https://discord.gg/PsqR9HvEvW" target="_blank">💬 Discord</a>
+  <a class="btn" href="https://www.youtube.com/@ir8s1234" target="_blank">▶️ YouTube</a>
+</div>
+
+<script>
+/* FULL PAGE SNOWSTORM */
+const canvas = document.getElementById("snowstorm");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let snow = [];
+for (let i = 0; i < 200; i++) {
+  snow.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    s: Math.random() * 2 + 1,
+    v: Math.random() * 0.7 + 0.4
+  });
+}
+
+function storm() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#e8faff";
+
+  snow.forEach(f => {
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.s, 0, Math.PI * 2);
+    ctx.fill();
+
+    f.x += Math.sin(f.y * 0.01) * 0.7;
+    f.y += f.v;
+
+    if (f.y > canvas.height) f.y = -5;
+    if (f.x > canvas.width) f.x = 0;
+    if (f.x < 0) f.x = canvas.width;
+  });
+
+  requestAnimationFrame(storm);
+}
+storm();
+
+/* ICE EXPLOSION FROM TITLE CENTER */
+function explodeFromElement(el) {
+  const rect = el.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  for (let i = 0; i < 22; i++) {  /* mehr Partikel = größer */
+    const p = document.createElement("div");
+    p.className = "ice";
+    p.style.left = x + "px";
+    p.style.top = y + "px";
+
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 60 + Math.random() * 60; /* Explosion so groß wie der Text */
+
+    p.style.setProperty("--x", Math.cos(angle) * dist + "px");
+    p.style.setProperty("--y", Math.sin(angle) * dist + "px");
+
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+const title = document.getElementById("title");
+
+title.addEventListener("click", () => {
+  explodeFromElement(title);
+
+  /* COPY TO CLIPBOARD */
+  navigator.clipboard.writeText("/pay ir8s1234 1b");
+});
+</script>
+
+</body>
+</html>
